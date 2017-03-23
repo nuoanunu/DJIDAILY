@@ -22,18 +22,18 @@
                         <!-- WHITE PANEL - TOP USER -->
                         <div class="white-panel pn">
                             <div class="white-header">
-                                <h5>TOP USER</h5>
+                                <h5>Khách Hàng</h5>
                             </div>
                             <p><img src="~/Content/img/ui-zac.jpg" class="img-circle" width="50"></p>
-                            <p><b>Zac Snider</b></p>
+                            <p><b>@thisWarranty.item.tb_customer.customerName</b></p>
                             <div class="row">
                                 <div class="col-md-6">
-                                    <p class="small mt">MEMBER SINCE</p>
-                                    <p>2012</p>
+                                    <p class="small mt">Phone</p>
+                                    <p>@thisWarranty.item.tb_customer.phonenumber</p>
                                 </div>
                                 <div class="col-md-6">
-                                    <p class="small mt">TOTAL SPEND</p>
-                                    <p>$ 47,60</p>
+                                    <p class="small mt">Địa chỉ</p>
+                                    <p>@thisWarranty.item.tb_customer.address</p>
                                 </div>
                             </div>
                         </div>
@@ -41,20 +41,38 @@
                     <div class="col-lg-4 col-md-4 col-sm-4 mb">
                         <div class="steps pn">
                             <input id='op1' name='op1' type='checkbox' checked />
-                            <label for='op1'>Ngày xuất kho: </label>
+                            <label for='op1'>Ngày xuất kho:  @thisWarranty.item.DateOfSold</label>
                             <input id='op2' name='op2' type='checkbox' />
-                            <label for='op2'>Ngày kích hoạt: </label>
+                            <label for='op2'>Ngày kích hoạt: @thisWarranty.startdate </label>
                             <input id='op3' name='op3' type='checkbox' />
-                            <label for='op3'>Hạn bảo hành: </label>
-                            <input type='submit' value='All Done!' id='submit' />
+                            <label for='op3'>Hạn bảo hành:  @thisWarranty.duration Tháng </label>
+                            <form action="/Home/KichHoat">
+                                <input type='submit' value='Kich hoạt!' id='submit' />
+                            </form>
                         </div>
                     </div><! --/col-md-4 -->
                     <div class="col-lg-4 col-md-4 col-sm-4 mb">
                         <div class="product-panel-2 pn">
                             <div class="badge badge-hot">HOT</div>
                             <img src="~/Content/img/product.jpg" width="200" alt="">
-                            <h5 class="mt">Tên sản phẩm</h5>
-                            <h6>Giá: 1388</h6>
+                            <h5 class="mt">@thisWarranty.item.tb_product_detail.productName</h5>
+                            @if (thisWarranty != null)
+                            {
+                                try
+                                {
+                                    <h6>
+                                        @thisWarranty.item.order.orderDetails.Where(u => u.productDetailID == thisWarranty.item.tb_product_detail.productStoreID).First().DonGia
+                                    </h6>
+                                }
+                                catch (Exception e)
+                                {
+                                    <h6>
+                                        Có lỗi truy vấn
+                                    </h6>
+                                }
+
+                            }
+                         
                             <button class="btn btn-small btn-theme04">Thôn tin chi tiết</button>
                         </div>
                     </div>
@@ -78,13 +96,34 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td data-title="Code">A224881SD</td>
-                                    <td data-title="Code">Bin</td>
-                                    <td data-title="Code">12/01/2017</td>
-                                    <td data-title="Code">12/2/2017</td>
-                                    <td data-title="Code"><button type="button" class="btn btn-success">Mã chính</button></td>
-                                </tr>
+                                @foreach (tb_warranty warranty in thisWarranty.item.tb_warranty)
+                                {
+                                    <tr>
+                                        <td data-title="Code">@warranty.warrantyID</td>
+                                        <td data-title="Code">@warranty.description</td>
+                                        <td data-title="Code">@warranty.duration tháng</td>
+
+                                        @if (warranty.startdate != null)
+                                        {
+                                            <td data-title="Code"> @warranty.startdate.AddMonths(warranty.duration) </td>
+                                        }
+                                        else
+                                        {
+                                            <td data-title="Code"> Chưa kích hoạt </td>
+                                        }
+
+                                        @if (warranty.MaChinh != null && warranty.MaChinh)
+                                        {
+                                            <td data-title="Code"><button type="button" class="btn btn-success">Mã chính</button></td>
+                                        }
+                                        else
+                                        {
+                                            <td data-title="Code"><button type="button" class="btn btn-warning">Mã phụ</button></td>
+                                        }
+                    
+                                    </tr>
+                                }
+                               
 
                             </tbody>
                         </table>

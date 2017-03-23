@@ -29,8 +29,8 @@ namespace djiDaiLy.Controllers
         }
         public ActionResult SearchWarranty()
         {
-            ViewBag.Message = "Your contact page.";
-
+            ThienNgaDatabaseEntities entityManager = new ThienNgaDatabaseEntities();
+            ViewData["warranties"] = entityManager.tb_warranty.Where(u => u.MaChinh != null && u.MaChinh == true).ToList();
             return View("SearchWarranty");
         }
         public ActionResult WarrantyDetail(int id)
